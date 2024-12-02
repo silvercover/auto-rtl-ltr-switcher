@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Auto RTL/LTR Switcher",
+  "version": "1.0",
+  "description": "Switch text direction based on input language.",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
