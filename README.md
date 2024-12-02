@@ -2,7 +2,7 @@
 Switch text direction based on input language.
 
 # نصب افزونه:
-- پوشه حاوی فایل‌های manifest.json و content.js را آماده کنید.
+- یک پوشه با نام دلخواه و حاوی فایل‌های manifest.json و content.js را آماده کنید.
 - به مرورگر کروم بروید و به آدرس chrome://extensions بروید.
 - حالت Developer Mode را فعال کنید.
 - روی دکمه Load unpacked کلیک کنید و پوشه افزونه را انتخاب کنید.
