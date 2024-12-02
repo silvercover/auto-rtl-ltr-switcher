@@ -14,3 +14,4 @@ Switch text direction based on input language.
 # عملکرد:
 وقتی کاربر در هر باکسی شروع به تایپ کند، افزونه زبان ورودی را بررسی می‌کند.
 اگر متن شامل حروف فارسی باشد، جهت راست‌به‌چپ (RTL) و اگر لاتین باشد، چپ‌به‌راست (LTR) تنظیم می‌شود.
+![دمو](https://github.com/silvercover/auto-rtl-ltr-switcher/blob/main/demo.gif)
