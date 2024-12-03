@@ -4,6 +4,12 @@
   "version": "1.0",
   "description": "Switch text direction based on input language.",
   "permissions": ["activeTab", "scripting"],
+   "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
