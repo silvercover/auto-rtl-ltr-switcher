@@ -1,15 +1,47 @@
-document.addEventListener('input', (event) => {
-  const target = event.target;
+// تابع تنظیم جهت متن
+function applyAutoDirection(element) {
+  element.addEventListener('input', () => {
+    const text = element.value || element.innerText; // گرفتن متن از input/textarea یا contenteditable
+    const isRTL = /[\u0600-\u06FF]/.test(text); // بررسی زبان متن (حروف فارسی)
+    element.style.direction = isRTL ? 'rtl' : 'ltr';
+    element.style.textAlign = isRTL ? 'right' : 'left';
+  });
+}
 
-  // بررسی می‌کنیم که آیا باکسی که در حال تایپ در آن هستیم یک input یا textarea است
-  if (target && (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT' || target.isContentEditable)) {
-    const text = target.value || target.innerText;
+// شناسایی و تنظیم برای عناصر موجود در صفحه
+function initializeAutoDirection() {
+  document.querySelectorAll('textarea, input, [contenteditable="true"]').forEach((element) => {
+    applyAutoDirection(element);
+  });
+}
 
-    // بررسی زبان متن با استفاده از regex
-    const isRTL = /[\u0600-\u06FF]/.test(text);
+// نظارت بر تغییرات DOM برای عناصر جدید
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    mutation.addedNodes.forEach((node) => {
+      if (node.nodeType === 1) {
+        if (
+          node.matches('textarea, input') || // بررسی عناصر استاندارد
+          node.isContentEditable // بررسی عناصر contenteditable
+        ) {
+          applyAutoDirection(node);
+        }
 
-    // تغییر جهت متن بر اساس زبان
-    target.style.direction = isRTL ? 'rtl' : 'ltr';
-    target.style.textAlign = isRTL ? 'right' : 'left';
-  }
+        // بررسی عناصر داخل Shadow DOM یا گره‌های فرزند
+        node.querySelectorAll?.('textarea, input, [contenteditable="true"]').forEach((child) => {
+          applyAutoDirection(child);
+        });
+      }
+    });
+  });
 });
+
+// نظارت بر کل body
+observer.observe(document.body, {
+  childList: true,
+  subtree: true,
+});
+
+// اجرای اولیه برای عناصر موجود
+initializeAutoDirection();
+
