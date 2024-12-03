@@ -1,4 +1,4 @@
-# auto-rtl-ltr-switcher
+# Auto RTL-LTR Switcher
 Switch text direction based on input language.
 
 # تغییر جهت خودکار متن
