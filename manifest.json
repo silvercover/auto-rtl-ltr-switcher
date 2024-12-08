@@ -3,7 +3,7 @@
   "name": "Auto RTL/LTR Switcher",
   "version": "1.5.2",
   "description": "Switch text direction based on input language.",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": [],
    "icons": {
     "16": "icon16.png",
     "32": "icon32.png",
