@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Auto RTL/LTR Switcher",
   "version": "1.6.0",
-  "description": "Automatically adjusts text direction and toggles page direction.",
+  "description": "Automatically adjusts text inputs direction and toggles page direction.",
   "permissions": ["scripting", "activeTab"],
   "host_permissions": ["<all_urls>"],
   "background": {
