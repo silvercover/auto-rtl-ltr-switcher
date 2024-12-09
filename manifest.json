@@ -1,16 +1,21 @@
 {
   "manifest_version": 3,
   "name": "Auto RTL/LTR Switcher",
-  "version": "1.5.3",
-  "description": "Switch text direction based on input language.",
-  "permissions": [],
-   "icons": {
-    "16": "icon16.png",
-    "32": "icon32.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
-  },
+  "version": "1.6.0",
+  "description": "Automatically adjusts text direction and toggles page direction.",
+  "permissions": ["scripting", "activeTab"],
   "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    },
+    "default_title": "Toggle Text Direction"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
