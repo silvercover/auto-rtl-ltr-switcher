@@ -1,6 +1,8 @@
 # Auto RTL-LTR Switcher Chrome Extension
 Switch text direction based on input language.
 
+Install Extension from Chrome Web Store(https://chromewebstore.google.com/detail/auto-rtlltr-switcher/iagbjlddhajgidlfcdpocafilcabjfbi)
+
 # Chrome Browser Extension for Automatic Text Direction Adjustment
 Many forms have sections for writing, which are mostly left-to-right by default. This makes writing difficult and reduces readability. That’s why I decided to create this simple extension, which automatically switches the text direction while typing.
 
