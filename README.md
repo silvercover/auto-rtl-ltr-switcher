@@ -5,11 +5,11 @@ Switch text direction based on input language.
 Many forms have sections for writing, which are mostly left-to-right by default. This makes writing difficult and reduces readability. That’s why I decided to create this simple extension, which automatically switches the text direction while typing.
 
 # How to Install the Extension:
-Extract the compressed file containing the source code that you downloaded.
-Open Chrome and go to chrome://extensions.
-Enable Developer Mode.
-Click the Load unpacked button and select the extension folder.
-The extension will now be activated.
+- Extract the compressed file containing the source code that you downloaded.
+- Open Chrome and go to chrome://extensions.
+- Enable Developer Mode.
+- Click the Load unpacked button and select the extension folder.
+- The extension will now be activated.
 
 # How It Works:
 When the user starts typing in any text box, the extension checks the input language.
@@ -37,11 +37,11 @@ Additionally, you can change the direction of the entire page by clicking on the
 تحتوي العديد من النماذج على أقسام للكتابة تكون غالبًا من اليسار إلى اليمين بشكل افتراضي، مما يجعل الكتابة صعبة ويقلل من وضوح النص. لهذا قررت إنشاء هذه الإضافة البسيطة التي تقوم بتبديل اتجاه النص تلقائيًا أثناء الكتابة.
 
 # طريقة تثبيت الإضافة:
-قم بفك ضغط الملف المضغوط الذي يحتوي على الكود المصدري الذي قمت بتنزيله.
-افتح متصفح كروم وانتقل إلى chrome://extensions.
-قم بتفعيل وضع المطور (Developer Mode).
-انقر على زر Load unpacked وحدد مجلد الإضافة.
-ستصبح الإضافة مفعّلة الآن.
+- قم بفك ضغط الملف المضغوط الذي يحتوي على الكود المصدري الذي قمت بتنزيله.
+- افتح متصفح كروم وانتقل إلى chrome://extensions.
+- قم بتفعيل وضع المطور (Developer Mode).
+- انقر على زر Load unpacked وحدد مجلد الإضافة.
+- ستصبح الإضافة مفعّلة الآن.
 
 # طريقة العمل:
 عندما يبدأ المستخدم بالكتابة في أي مربع نص، تقوم الإضافة بفحص لغة الإدخال.
