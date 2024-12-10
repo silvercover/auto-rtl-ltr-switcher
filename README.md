@@ -6,7 +6,7 @@ Switch text direction based on input language.
 # Chrome Browser Extension for Automatic Text Direction Adjustment
 Many forms have sections for writing, which are mostly left-to-right by default. This makes writing difficult and reduces readability. That’s why I decided to create this simple extension, which automatically switches the text direction while typing.
 
-# How to Install the Extension:
+# How to Manually Install the Extension:
 - Extract the compressed file containing the source code that you downloaded.
 - Open Chrome and go to chrome://extensions.
 - Enable Developer Mode.
@@ -23,7 +23,11 @@ Additionally, you can change the direction of the entire page by clicking on the
 #  افزونه مرورگر کروم برای تغییر جهت خودکار متن
 داخل خیلی از فرم ها بخش هایی برای نوشتن هست که اکثراً چپ به راست هستن و نوشتن رو سخت و خوانایی رو کم می‌کنه، این شد که تصمیم گرفتم این افزونه ساده رو بنویسم که حین تایپ جهت متن اتوماتیک سوییچ بشه.
 
-# نصب افزونه:
+
+[نصب افزونه از طریق Chrome Store](https://chromewebstore.google.com/detail/auto-rtlltr-switcher/iagbjlddhajgidlfcdpocafilcabjfbi)
+
+
+# نصب دستی افزونه:
 - یک پوشه با نام دلخواه و حاوی فایل‌های دانلودی شامل آیکن ها و manifest.json و content.js را آماده کنید.
 - به مرورگر کروم بروید و به آدرس chrome://extensions بروید.
 - حالت Developer Mode را فعال کنید.
