@@ -1,5 +1,3 @@
-// ----------------- Original Auto-Direction Code (Unchanged) -----------------
-
 function applyAutoDirection(element) {
   if (element.type === 'password') return;
   element.addEventListener('input', () => {
@@ -36,8 +34,6 @@ const observer = new MutationObserver((mutations) => {
 observer.observe(document.body, { childList: true, subtree: true });
 initializeAutoDirection();
 
-// ----------------- New Code for Toggle Font & Direction -----------------
-
 // Global flag to track font toggle state
 let fontToggled = false;
 
@@ -66,8 +62,11 @@ function injectFontStyle(context) {
   if (!existingStyle) {
     const style = createElement('style');
     style.id = 'vazirmatn-global-style';
-    // Apply font to all elements except <mat-icon> elements and their descendants,
-    // but force apply Vazirmatn on .conversation-title elements.
+    /* 
+      Apply font to all elements using 'Vazirmatn' 
+      Exclude <mat-icon> elements and their descendants by unsetting font-family,
+      but force apply Vazirmatn on elements with class "conversation-title".
+    */
     style.innerHTML = `
       * { font-family: 'Vazirmatn', sans-serif; }
       mat-icon, mat-icon * { font-family: unset; }
