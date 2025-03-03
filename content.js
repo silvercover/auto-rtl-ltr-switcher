@@ -1,31 +1,3 @@
-// Function to detect the current text direction of the website
-function detectDirection() {
-  const htmlDir = document.documentElement.getAttribute('dir') || 'ltr';
-  chrome.runtime.sendMessage({ action: 'updateBadge', direction: htmlDir });
-}
-
-// Function to toggle the text direction of the website
-function toggleDirection() {
-  const currentDir = document.documentElement.getAttribute('dir') || 'ltr';
-  const newDir = currentDir === 'rtl' ? 'ltr' : 'rtl';
-  document.documentElement.setAttribute('dir', newDir);
-  chrome.runtime.sendMessage({ action: 'updateBadge', direction: newDir });
-}
-
-// Listener for messages from background script
-chrome.runtime.onMessage.addListener((message) => {
-  if (message.action === 'toggleDirection') {
-    toggleDirection();
-  } else if (message.action === 'detectDirection') {
-    detectDirection();
-  }
-});
-
-// Initial detection on page load
-detectDirection();
-
-
-
 // Function to set text direction based on the content
 function applyAutoDirection(element) {
   // Skip processing if the input type is 'password'
@@ -81,3 +53,41 @@ observer.observe(document.body, {
 
 // Initial execution for existing elements
 initializeAutoDirection();
+
+// Function to load Vazirmatn font stylesheet from Google Fonts CDN
+function loadVazirmatnFont() {
+  if (!document.getElementById('vazirmatn-font-link')) {
+    const link = document.createElement('link');
+    link.id = 'vazirmatn-font-link';
+    link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap';
+    document.head.appendChild(link);
+  }
+}
+
+// Function to toggle the page font to/from Vazirmatn
+function togglePageFont() {
+  const currentFont = document.body.style.fontFamily;
+  if (currentFont && currentFont.includes('Vazirmatn')) {
+    document.body.style.fontFamily = '';
+  } else {
+    loadVazirmatnFont();
+    document.body.style.fontFamily = "'Vazirmatn', sans-serif";
+  }
+}
+
+// Function to toggle the page direction (RTL/LTR)
+function togglePageDirection() {
+  document.body.dir = (document.body.dir === 'rtl') ? 'ltr' : 'rtl';
+}
+
+// Listener for messages from popup
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'toggleFont') {
+    togglePageFont();
+    sendResponse({status: 'font toggled'});
+  } else if (request.action === 'toggleDirection') {
+    togglePageDirection();
+    sendResponse({status: 'direction toggled'});
+  }
+});

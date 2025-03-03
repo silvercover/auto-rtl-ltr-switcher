@@ -1,6 +1,7 @@
 # Auto RTL-LTR Switcher Chrome Extension
 Switch text direction based on input language.
 
+<<<<<<< Updated upstream
 [Install Extension from Chrome Web Store](https://chromewebstore.google.com/detail/auto-rtlltr-switcher/iagbjlddhajgidlfcdpocafilcabjfbi)
 
 # Chrome Browser Extension for Automatic Text Direction Adjustment
@@ -20,6 +21,8 @@ If the text contains Persian characters, the direction is set to right-to-left (
 If it contains Latin characters, it is set to left-to-right (LTR).
 Additionally, you can change the direction of the entire page by clicking on the extension icon. For instance, if a website is displayed in left-to-right, you can switch it to right-to-left.
 
+=======
+>>>>>>> Stashed changes
 #  افزونه مرورگر کروم برای تغییر جهت خودکار متن
 داخل خیلی از فرم ها بخش هایی برای نوشتن هست که اکثراً چپ به راست هستن و نوشتن رو سخت و خوانایی رو کم می‌کنه، این شد که تصمیم گرفتم این افزونه ساده رو بنویسم که حین تایپ جهت متن اتوماتیک سوییچ بشه.
 
@@ -37,6 +40,7 @@ Additionally, you can change the direction of the entire page by clicking on the
 # عملکرد:
 وقتی کاربر در هر باکسی شروع به تایپ کند، افزونه زبان ورودی را بررسی می‌کند.
 اگر متن شامل حروف فارسی باشد، جهت راست‌به‌چپ (RTL) و اگر لاتین باشد، چپ‌به‌راست (LTR) تنظیم می‌شود.
+<<<<<<< Updated upstream
 همچنین این امکان وجود دارد که با کلیک روی آیکن افزونه جهت نمایش کل صفحه را تغییر داد و اگر یک سایت چپ به راست بود باعث شود راست به چپ نمایش داده شود.
 
 # إضافة متصفح كروم لتغيير اتجاه النص تلقائيًا
@@ -55,5 +59,7 @@ Additionally, you can change the direction of the entire page by clicking on the
 إذا كان النص يحتوي على حروف فارسية، يتم تعيين الاتجاه من اليمين إلى اليسار (RTL).
 إذا كان النص يحتوي على حروف لاتينية، يتم تعيين الاتجاه من اليسار إلى اليمين (LTR).
 بالإضافة إلى ذلك، يمكنك تغيير اتجاه الصفحة بالكامل بالنقر على أيقونة الإضافة. على سبيل المثال، إذا كان الموقع يعرض النصوص من اليسار إلى اليمين، يمكنك تغييره ليُعرض من اليمين إلى اليسار.
+=======
+>>>>>>> Stashed changes
 
 ![دمو](https://github.com/silvercover/auto-rtl-ltr-switcher/blob/main/demo.gif)
