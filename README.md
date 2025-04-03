@@ -2,7 +2,7 @@
 
 Switch text direction based on input language and add additional controls for toggling the page font (Vazirmatn) and overall page direction (RTL/LTR).
 
-[Install Extension from Chrome Web Store](https://chromewebstore.google.com/detail/auto-rtlltr-switcher/iagbjldlfcdpocafilcabjfbi)
+[Install Extension from Chrome Web Store](https://chromewebstore.google.com/detail/auto-rtlltr-switcher/iagbjlddhajgidlfcdpocafilcabjfbi)
 
 ## Chrome Browser Extension for Automatic Text Direction Adjustment
 
