@@ -3,6 +3,9 @@
 Switch text direction based on input language and add additional controls for toggling the page font (Vazirmatn) and overall page direction (RTL/LTR).
 
 [Install Extension from Chrome Web Store](https://chromewebstore.google.com/detail/auto-rtlltr-switcher/iagbjlddhajgidlfcdpocafilcabjfbi)
+[Install Firefox Add-on](https://addons.mozilla.org/en-US/firefox/addon/auto-rtl-ltr-switcher/)
+[Install Microsoft Edge Add-on](https://microsoftedge.microsoft.com/addons/detail/auto-rtlltr-switcher/mlgackcdenhmekdbabkdceibpojnoekm)
+
 
 ## Chrome Browser Extension for Automatic Text Direction Adjustment
 
@@ -32,6 +35,8 @@ When the user starts typing in any text box, the extension checks the input lang
 این افزونه جهت متون را بر اساس زبان ورودی به‌صورت خودکار تنظیم می‌کند و کنترل‌های جدیدی برای تغییر فونت صفحه به فونت Vazirmatn (از طریق Google Fonts) و تغییر جهت کلی صفحه (RTL/LTR) اضافه شده است.
 
 [نصب افزونه از طریق Chrome Store](https://chromewebstore.google.com/detail/auto-rtlltr-switcher/iagbjlddhajgidlfcdpocafilcabjfbi)
+[نصب نسخه فایرفاکس](https://addons.mozilla.org/en-US/firefox/addon/auto-rtl-ltr-switcher/)
+[نصب نسخه مخصوص Edge](https://microsoftedge.microsoft.com/addons/detail/auto-rtlltr-switcher/mlgackcdenhmekdbabkdceibpojnoekm)
 
 ## نصب دستی افزونه:
 - یک پوشه با نام دلخواه شامل فایل‌های دانلودی (مانند آیکون‌ها، manifest.json و content.js) را آماده کنید.
