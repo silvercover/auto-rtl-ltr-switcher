@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Auto RTL/LTR Switcher",
-  "version": "2.0",
+  "version": "2.1",
   "description": "Automatically switch text direction based on input language and allow toggling page font (Vazirmatn) and direction.",
   "icons": {
     "16": "icon16.png",
@@ -25,6 +25,17 @@
     "default_icon": {
       "16": "icon16.png",
       "32": "icon32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "toggle-direction": {
+      "suggested_key": {
+        "default": "Alt+Shift+D"
+      },
+      "description": "Toggle page direction (RTL/LTR)"
     }
   },
   "permissions": [
