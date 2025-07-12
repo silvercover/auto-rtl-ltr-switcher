@@ -37,10 +37,47 @@ initializeAutoDirection();
 // Global flag to track font toggle state
 let fontToggled = false;
 
+// Function to get current domain
+function getCurrentDomain() {
+  return window.location.hostname;
+}
+
+// Function to save font setting for the current domain
+function saveFontSetting(enabled) {
+  const domain = getCurrentDomain();
+  chrome.storage.local.get(['fontSettings'], (result) => {
+    const fontSettings = result.fontSettings || {};
+    fontSettings[domain] = { fontEnabled: enabled };
+    chrome.storage.local.set({ fontSettings });
+
+    // Also notify the popup of the state change
+    chrome.runtime.sendMessage({
+      action: 'fontStateChanged',
+      domain: domain,
+      enabled: enabled
+    });
+  });
+}
+
+// Load the font setting when page loads
+function loadFontSetting() {
+  const domain = getCurrentDomain();
+  chrome.storage.local.get(['fontSettings'], (result) => {
+    const fontSettings = result.fontSettings || {};
+    const domainSetting = fontSettings[domain];
+
+    if (domainSetting && domainSetting.fontEnabled) {
+      loadVazirmatnFont();
+      injectFontStyle(document);
+      fontToggled = true;
+    }
+  });
+}
+
 // Revised function to inject font style into a given context (Document, ShadowRoot, etc.)
 function injectFontStyle(context) {
   if (!context) return;
-  
+
   // Determine the appropriate createElement function
   let createElement;
   if (typeof context.createElement === 'function') {
@@ -50,7 +87,7 @@ function injectFontStyle(context) {
   } else {
     return;
   }
-  
+
   // Check if the style is already injected
   let existingStyle = null;
   if (typeof context.getElementById === 'function') {
@@ -58,7 +95,7 @@ function injectFontStyle(context) {
   } else if (typeof context.querySelector === 'function') {
     existingStyle = context.querySelector('#vazirmatn-global-style');
   }
-  
+
   if (!existingStyle) {
     const style = createElement('style');
     style.id = 'vazirmatn-global-style';
@@ -80,7 +117,7 @@ function injectFontStyle(context) {
       context.appendChild(style);
     }
   }
-  
+
   // Recursively inject style into shadow roots (if accessible)
   if (context.body) {
     const walker = context.createTreeWalker(context.body, NodeFilter.SHOW_ELEMENT, null, false);
@@ -91,7 +128,7 @@ function injectFontStyle(context) {
       }
     }
   }
-  
+
   // Inject style into same-origin iframes
   if (typeof context.getElementsByTagName === 'function') {
     const iframes = context.getElementsByTagName('iframe');
@@ -109,18 +146,18 @@ function injectFontStyle(context) {
 // Revised function to remove the injected font style from a given context
 function removeFontStyle(context) {
   if (!context) return;
-  
+
   let style = null;
   if (typeof context.getElementById === 'function') {
     style = context.getElementById('vazirmatn-global-style');
   } else if (typeof context.querySelector === 'function') {
     style = context.querySelector('#vazirmatn-global-style');
   }
-  
+
   if (style && typeof style.remove === 'function') {
     style.remove();
   }
-  
+
   // Recursively remove from shadow roots
   if (context.body) {
     const walker = context.createTreeWalker(context.body, NodeFilter.SHOW_ELEMENT, null, false);
@@ -131,7 +168,7 @@ function removeFontStyle(context) {
       }
     }
   }
-  
+
   // Remove style from iframes
   if (typeof context.getElementsByTagName === 'function') {
     const iframes = context.getElementsByTagName('iframe');
@@ -162,11 +199,16 @@ function togglePageFont() {
   if (fontToggled) {
     removeFontStyle(document);
     fontToggled = false;
+    saveFontSetting(false);
   } else {
     loadVazirmatnFont();
     injectFontStyle(document);
     fontToggled = true;
+    saveFontSetting(true);
   }
+
+  // Return the current state for the popup
+  return fontToggled;
 }
 
 // Toggle the page direction (RTL/LTR)
@@ -174,14 +216,20 @@ function togglePageDirection() {
   document.body.dir = (document.body.dir === 'rtl') ? 'ltr' : 'rtl';
 }
 
+// Initialize by loading saved font setting
+loadFontSetting();
+
 // Listener for messages from the popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'toggleFont') {
-    togglePageFont();
-    sendResponse({ status: 'font toggled' });
+    const newState = togglePageFont();
+    sendResponse({ status: 'font toggled', enabled: newState });
   } else if (request.action === 'toggleDirection') {
     togglePageDirection();
     sendResponse({ status: 'direction toggled' });
+  } else if (request.action === 'getFontState') {
+    // New message to get the current font state for this page
+    sendResponse({ enabled: fontToggled });
   }
   return true; // Keep the messaging channel open
 });

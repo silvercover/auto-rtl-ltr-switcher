@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Auto RTL/LTR Switcher",
-  "version": "2.1",
+  "version": "2.5",
   "description": "Automatically switch text direction based on input language and allow toggling page font (Vazirmatn) and direction.",
   "icons": {
     "16": "icon16.png",
@@ -40,7 +40,8 @@
   },
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;"
