@@ -2,56 +2,61 @@ document.addEventListener('DOMContentLoaded', function () {
   const toggleFontButton = document.getElementById('toggleFont');
   const toggleDirectionButton = document.getElementById('toggleDirection');
 
-  function sendMessageToActiveTab(action) {
-    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-      if (!tabs || !tabs[0]) {
-        console.error("No active tab found");
-        return;
+  // Function to update the font button's visual state
+  function updateFontButtonState(enabled) {
+    if (enabled) {
+      toggleFontButton.classList.add('active');
+    } else {
+      toggleFontButton.classList.remove('active');
+    }
+  }
+  
+  // Query the active tab to get its ID
+  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    if (!tabs || !tabs[0] || !tabs[0].id) {
+      console.error("Could not find active tab.");
+      return;
+    }
+    const tabId = tabs[0].id;
+
+    // Immediately ask the content script for the current font state when the popup opens
+    chrome.tabs.sendMessage(tabId, { action: 'getFontState' }, function(response) {
+      // Handle cases where the content script isn't ready
+      if (chrome.runtime.lastError) {
+        console.log("Content script might not be injected yet. Button will appear as default.");
+        return; 
       }
-      const tabId = tabs[0].id;
-      chrome.tabs.sendMessage(tabId, { action: action }, function(response) {
+      if (response && typeof response.enabled !== 'undefined') {
+        updateFontButtonState(response.enabled);
+      }
+    });
+
+    // --- Event Listeners ---
+
+    toggleFontButton.addEventListener('click', function () {
+      chrome.tabs.sendMessage(tabId, { action: 'toggleFont' }, function(response) {
         if (chrome.runtime.lastError) {
-          console.error("Error: " + chrome.runtime.lastError.message);
-          if (chrome.runtime.lastError.message.includes("Could not establish connection")) {
-            // Re-inject content script dynamically using chrome.scripting.executeScript
-            chrome.scripting.executeScript({
-              target: { tabId: tabId },
-              files: ["content.js"]
-            }, () => {
-              if (chrome.runtime.lastError) {
-                console.error("Injection error: " + chrome.runtime.lastError.message);
-                alert("Failed to inject content script: " + chrome.runtime.lastError.message);
-              } else {
-                // Try sending the message again after injection
-                chrome.tabs.sendMessage(tabId, { action: action }, function(resp) {
-                  if (chrome.runtime.lastError) {
-                    console.error("Error after injection: " + chrome.runtime.lastError.message);
-                    alert("Error after injection: " + chrome.runtime.lastError.message);
-                  } else if (resp) {
-                    console.log(resp.status);
-                  } else {
-                    console.log("No response received after injection");
-                  }
-                });
-              }
-            });
-          } else {
-            alert("Error: " + chrome.runtime.lastError.message);
-          }
-        } else if (response) {
-          console.log(response.status);
-        } else {
-          console.log("No response received");
+          console.error("Error sending toggleFont message: " + chrome.runtime.lastError.message);
+          // Optional: Add logic here to inject the script if it's missing
+          return;
+        }
+        if (response && typeof response.enabled !== 'undefined') {
+          // Update button state immediately based on the response from the content script
+          updateFontButtonState(response.enabled);
         }
       });
     });
-  }
 
-  toggleFontButton.addEventListener('click', function () {
-    sendMessageToActiveTab('toggleFont');
-  });
-
-  toggleDirectionButton.addEventListener('click', function () {
-    sendMessageToActiveTab('toggleDirection');
+    toggleDirectionButton.addEventListener('click', function () {
+      chrome.tabs.sendMessage(tabId, { action: 'toggleDirection' }, function(response) {
+        if (chrome.runtime.lastError) {
+          console.error("Error sending toggleDirection message: " + chrome.runtime.lastError.message);
+          return;
+        }
+        if (response) {
+          console.log(response.status);
+        }
+      });
+    });
   });
 });

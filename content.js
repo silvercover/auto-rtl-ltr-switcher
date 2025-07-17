@@ -1,10 +1,85 @@
+// Check if we are on chatgpt.com or not
+function isChatGPT() {
+  return window.location.hostname === 'chatgpt.com';
+}
+
+// Function to manage flex container direction (only for ChatGPT)
+function handleFlexContainerDirection(element, isRTL) {
+  if (!isChatGPT()) return;
+  
+  // Multi-stage search for flex container
+  const selectors = [
+    '.relative.mx-5.flex.min-h-14', // Specific for ChatGPT
+    '.flex',
+    '[style*="display:flex"]',
+    '[style*="display: flex"]'
+  ];
+  
+  let flexContainer = null;
+  
+  // Search with selectors
+  for (const selector of selectors) {
+    flexContainer = element.closest(selector);
+    if (flexContainer) break;
+  }
+  
+  // If not found with selector, search with computed style
+  if (!flexContainer) {
+    let parent = element.parentElement;
+    while (parent && parent !== document.body) {
+      const computedStyle = window.getComputedStyle(parent);
+      if (computedStyle.display === 'flex') {
+        flexContainer = parent;
+        break;
+      }
+      parent = parent.parentElement;
+    }
+  }
+  
+  if (flexContainer) {
+    // Save original flex-direction on first time
+    if (!flexContainer.hasAttribute('data-original-flex-direction')) {
+      const originalDirection = window.getComputedStyle(flexContainer).flexDirection;
+      flexContainer.setAttribute('data-original-flex-direction', originalDirection);
+    }
+    
+    // Change flex container direction
+    if (isRTL) {
+      flexContainer.style.flexDirection = 'row-reverse';
+    } else {
+      // Return to original state
+      const originalDirection = flexContainer.getAttribute('data-original-flex-direction');
+      flexContainer.style.flexDirection = originalDirection || 'row';
+    }
+  }
+}
+
 function applyAutoDirection(element) {
   if (element.type === 'password') return;
+  
   element.addEventListener('input', () => {
     const text = element.value || element.innerText;
     const isRTL = /[\u0600-\u06FF]/.test(text);
+    
+    // Change main element direction
     element.style.direction = isRTL ? 'rtl' : 'ltr';
     element.style.textAlign = isRTL ? 'right' : 'left';
+    element.style.unicodeBidi = isRTL ? 'embed' : 'normal';
+    
+    // Change flex container direction only in ChatGPT
+    if (isChatGPT()) {
+      handleFlexContainerDirection(element, isRTL);
+    }
+    
+    // Apply changes to inner paragraphs
+    if (element.isContentEditable) {
+      const paragraphs = element.querySelectorAll('p');
+      paragraphs.forEach(p => {
+        p.style.direction = isRTL ? 'rtl' : 'ltr';
+        p.style.textAlign = isRTL ? 'right' : 'left';
+        p.style.unicodeBidi = isRTL ? 'embed' : 'normal';
+      });
+    }
   });
 }
 

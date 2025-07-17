@@ -17,6 +17,9 @@
       "js": [
         "content.js"
       ],
+      "exclude_matches": [
+        "*://*.shaparak.ir/*"
+      ],
       "run_at": "document_end"
     }
   ],
