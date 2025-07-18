@@ -43,7 +43,6 @@
   },
   "permissions": [
     "activeTab",
-    "scripting",
     "storage"
   ],
   "content_security_policy": {
