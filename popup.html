@@ -1,185 +1,128 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Auto RTL/LTR Switcher</title>
   <style>
+    * { box-sizing: border-box; }
+
     body {
-      min-width: 250px;
-      min-height: 120px;
-      font-family: Arial, sans-serif;
-      padding: 12px;
+      font-family: Tahoma, Arial, sans-serif;
       margin: 0;
-      background-color: #ffffff;
-    }
-    
-    .header {
-      font-size: 16px;
-      font-weight: 500;
-      margin-bottom: 12px;
-      color: #202124;
-    }
-    
-    button {
-      width: 100%;
       padding: 10px;
-      margin: 6px 0;
-      font-size: 14px;
-      cursor: pointer;
-      background-color: #f8f9fa;
-      border: 1px solid #dadce0;
-      border-radius: 4px;
-      color: #202124;
-      transition: all 0.2s ease;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      width: 230px;
+      background: #ebebeb;
     }
-    
-    button:hover {
-      background-color: #f1f3f4;
-      border-color: #c6c6c6;
-    }
-    
-    button:active {
-      background-color: #e8e8e8;
-    }
-    
-    button.active {
+
+    h3 {
+      margin: 0 0 8px 2px;
+      font-size: 13px;
       font-weight: bold;
-      background-color: #e8f5e9;
-      border: 1px solid #a5d6a7;
-    }
-    
-    small {
-      font-size: 11px;
-      color: #5f6368;
-      font-weight: normal;
+      color: #333;
     }
 
-    /* ===== Toggle Switch Styles ===== */
-    .switch-container {
+    button.row {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 10px;
-      margin: 6px 0;
-      background-color: #f8f9fa;
-      border: 1px solid #dadce0;
-      border-radius: 4px;
-      transition: all 0.2s ease;
+      justify-content: space-between;
+      width: 100%;
+      padding: 8px 12px;
+      background: #fff;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 5px;
+      cursor: pointer;
+      font-family: Tahoma, Arial, sans-serif;
+      font-size: 13px;
+      color: #333;
+      text-align: left;
     }
 
-    .switch-container:hover {
-      background-color: #f1f3f4;
-      border-color: #c6c6c6;
+    button.row:hover { background: #f5f5f5; }
+    button.row.active { background: #e8f5e9; }
+
+    button.row .hint {
+      color: #999;
+      font-size: 12px;
     }
 
-    .switch-label {
-      font-size: 14px;
-      color: #202124;
-      user-select: none;
+    /* Disable toggle row — same visual weight as buttons above */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: #fff;
+      border-radius: 5px;
+      margin-bottom: 5px;
+      font-size: 13px;
+      color: #333;
     }
 
-    .switch-label small {
-      display: block;
-      margin-top: 2px;
-    }
-
-    /* The toggle switch */
+    /* Switch */
     .switch {
       position: relative;
-      width: 40px;
-      height: 22px;
+      width: 36px;
+      height: 20px;
       flex-shrink: 0;
-      margin-left: 10px;
     }
-
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
+    .switch input { display: none; }
 
     .slider {
       position: absolute;
+      inset: 0;
+      background: #ccc;
+      border-radius: 20px;
       cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: 0.3s;
-      border-radius: 22px;
+      transition: background 0.2s;
     }
-
-    .slider:before {
+    .slider::before {
+      content: '';
       position: absolute;
-      content: "";
-      height: 16px;
-      width: 16px;
+      width: 14px;
+      height: 14px;
       left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: 0.3s;
+      top: 3px;
+      background: #fff;
       border-radius: 50%;
+      transition: transform 0.2s;
     }
 
-    input:checked + .slider {
-      background-color: #4caf50;
-    }
+    /* GREEN when active */
+    input:checked + .slider { background: #4caf50; }
+    input:checked + .slider::before { transform: translateX(16px); }
 
-    input:checked + .slider:before {
-      transform: translateX(18px);
-    }
-
-    .switch-container.disabled {
-      opacity: 0.5;
-    }
-
-    .switch-container.disabled .switch-label {
-      text-decoration: line-through;
-      color: #999;
-    }
-    /* ===== End Toggle Switch Styles ===== */
-
-    .separator {
-      border: none;
-      border-top: 1px solid #f1f3f4;
-      margin: 10px 0 6px 0;
-    }
-    
     .footer {
-      margin-top: 10px;
-      font-size: 11px;
-      color: #5f6368;
       text-align: center;
-      border-top: 1px solid #f1f3f4;
-      padding-top: 8px;
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 4px;
     }
   </style>
 </head>
 <body>
-  <div class="header">Page Text Settings</div>
+  <h3>Page Text Settings</h3>
 
-  <!-- Auto Direction Toggle Switch -->
-  <div class="switch-container" id="autoDirectionContainer">
-    <div class="switch-label">
-      Auto Direction
-      <small>Auto-detect input direction</small>
-    </div>
+  <button class="row" id="toggleFont">
+    <span>Toggle Font</span>
+    <span class="hint">(Vazirmatn)</span>
+  </button>
+
+  <button class="row" id="toggleDirection">
+    <span>Toggle Direction</span>
+    <span class="hint">(Alt+Shift+D)</span>
+  </button>
+
+  <div class="toggle-row">
+    <span>Disable on this site</span>
     <label class="switch">
-      <input type="checkbox" id="autoDirectionToggle" checked>
+      <input type="checkbox" id="toggleSiteDisabled">
       <span class="slider"></span>
     </label>
   </div>
 
-  <hr class="separator">
+  <div class="footer" id="versionLabel">Auto RTL/LTR Switcher</div>
 
-  <button id="toggleFont">Toggle Font <small>(Vazirmatn)</small></button>
-  <button id="toggleDirection">Toggle Direction <small>(Ctrl+Shift+X)</small></button>
-
-  <div class="footer">Auto RTL/LTR Switcher v2.7</div>
   <script src="popup.js"></script>
 </body>
 </html>

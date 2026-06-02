@@ -1,97 +1,53 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const toggleFontButton = document.getElementById('toggleFont');
-  const toggleDirectionButton = document.getElementById('toggleDirection');
-  const autoDirectionToggle = document.getElementById('autoDirectionToggle');
-  const autoDirectionContainer = document.getElementById('autoDirectionContainer');
+  const toggleFontBtn     = document.getElementById('toggleFont');
+  const toggleDirBtn      = document.getElementById('toggleDirection');
+  const siteDisabledCheck = document.getElementById('toggleSiteDisabled');
+  const versionLabel      = document.getElementById('versionLabel');
 
-  // Function to update the font button's visual state
-  function updateFontButtonState(enabled) {
-    if (enabled) {
-      toggleFontButton.classList.add('active');
-    } else {
-      toggleFontButton.classList.remove('active');
-    }
+  // Read version from manifest.json automatically
+  const { version } = chrome.runtime.getManifest();
+  versionLabel.textContent = `Auto RTL/LTR Switcher v${version}`;
+
+  function setFontActive(enabled) {
+    toggleFontBtn.classList.toggle('active', !!enabled);
   }
 
-  // Function to update the auto direction switch visual state
-  function updateAutoDirectionState(enabled) {
-    autoDirectionToggle.checked = enabled;
-    if (enabled) {
-      autoDirectionContainer.classList.remove('disabled');
-    } else {
-      autoDirectionContainer.classList.add('disabled');
-    }
-  }
-  
-  // Query the active tab to get its ID
-  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-    if (!tabs || !tabs[0] || !tabs[0].id) {
-      console.error("Could not find active tab.");
-      return;
-    }
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    if (!tabs?.[0]?.id) return;
     const tabId = tabs[0].id;
 
-    // Get the current font state
-    chrome.tabs.sendMessage(tabId, { action: 'getFontState' }, function(response) {
-      if (chrome.runtime.lastError) {
-        console.log("Content script might not be injected yet.");
-        return; 
-      }
-      if (response && typeof response.enabled !== 'undefined') {
-        updateFontButtonState(response.enabled);
-      }
+    // Restore font state
+    chrome.tabs.sendMessage(tabId, { action: 'getFontState' }, (res) => {
+      if (chrome.runtime.lastError) return;
+      if (res) setFontActive(res.enabled);
     });
 
-    // Get the current auto direction state
-    chrome.tabs.sendMessage(tabId, { action: 'getAutoDirectionState' }, function(response) {
-      if (chrome.runtime.lastError) {
-        console.log("Content script might not be injected yet.");
-        return;
-      }
-      if (response && typeof response.enabled !== 'undefined') {
-        updateAutoDirectionState(response.enabled);
-      }
+    // Restore site-disabled state
+    chrome.tabs.sendMessage(tabId, { action: 'getSiteDisabledState' }, (res) => {
+      if (chrome.runtime.lastError) return;
+      if (res) siteDisabledCheck.checked = res.isDisabled;
     });
 
-    // --- Event Listeners ---
-
-    toggleFontButton.addEventListener('click', function () {
-      chrome.tabs.sendMessage(tabId, { action: 'toggleFont' }, function(response) {
-        if (chrome.runtime.lastError) {
-          console.error("Error sending toggleFont message: " + chrome.runtime.lastError.message);
-          return;
-        }
-        if (response && typeof response.enabled !== 'undefined') {
-          updateFontButtonState(response.enabled);
-        }
+    toggleFontBtn.addEventListener('click', () => {
+      chrome.tabs.sendMessage(tabId, { action: 'toggleFont' }, (res) => {
+        if (chrome.runtime.lastError) return;
+        if (res) setFontActive(res.enabled);
       });
     });
 
-    toggleDirectionButton.addEventListener('click', function () {
-      chrome.tabs.sendMessage(tabId, { action: 'toggleDirection' }, function(response) {
-        if (chrome.runtime.lastError) {
-          console.error("Error sending toggleDirection message: " + chrome.runtime.lastError.message);
-          return;
-        }
-        if (response) {
-          console.log(response.status);
-        }
+    toggleDirBtn.addEventListener('click', () => {
+      chrome.tabs.sendMessage(tabId, { action: 'toggleDirection' }, (res) => {
+        if (chrome.runtime.lastError) return;
       });
     });
 
-    // Auto Direction toggle switch
-    autoDirectionToggle.addEventListener('change', function () {
-      const enabled = autoDirectionToggle.checked;
-      chrome.tabs.sendMessage(tabId, { action: 'setAutoDirection', enabled: enabled }, function(response) {
+    siteDisabledCheck.addEventListener('change', () => {
+      chrome.tabs.sendMessage(tabId, { action: 'toggleSiteDisabled' }, (res) => {
         if (chrome.runtime.lastError) {
-          console.error("Error sending setAutoDirection message: " + chrome.runtime.lastError.message);
-          // Revert the toggle if message failed
-          autoDirectionToggle.checked = !enabled;
+          siteDisabledCheck.checked = !siteDisabledCheck.checked; // revert
           return;
         }
-        if (response && typeof response.enabled !== 'undefined') {
-          updateAutoDirectionState(response.enabled);
-        }
+        if (res) siteDisabledCheck.checked = res.isDisabled;
       });
     });
   });
