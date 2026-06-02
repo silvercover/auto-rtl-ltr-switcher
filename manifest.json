@@ -1,7 +1,9 @@
 {
+"update_url": "https://clients2.google.com/service/update2/crx",
+
   "manifest_version": 3,
   "name": "Auto RTL/LTR Switcher",
-  "version": "2.7",
+  "version": "2.5",
   "description": "Automatically switch text direction based on input language and allow toggling page font (Vazirmatn) and direction.",
   "icons": {
     "16": "icon16.png",
@@ -36,8 +38,7 @@
   "commands": {
     "toggle-direction": {
       "suggested_key": {
-        "default": "Ctrl+Shift+X",
-        "mac": "Command+Shift+X"
+        "default": "Alt+Shift+D"
       },
       "description": "Toggle page direction (RTL/LTR)"
     }

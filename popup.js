@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   const toggleFontButton = document.getElementById('toggleFont');
   const toggleDirectionButton = document.getElementById('toggleDirection');
-  const autoDirectionToggle = document.getElementById('autoDirectionToggle');
-  const autoDirectionContainer = document.getElementById('autoDirectionContainer');
 
   // Function to update the font button's visual state
   function updateFontButtonState(enabled) {
@@ -10,16 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
       toggleFontButton.classList.add('active');
     } else {
       toggleFontButton.classList.remove('active');
-    }
-  }
-
-  // Function to update the auto direction switch visual state
-  function updateAutoDirectionState(enabled) {
-    autoDirectionToggle.checked = enabled;
-    if (enabled) {
-      autoDirectionContainer.classList.remove('disabled');
-    } else {
-      autoDirectionContainer.classList.add('disabled');
     }
   }
   
@@ -31,25 +19,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     const tabId = tabs[0].id;
 
-    // Get the current font state
+    // Immediately ask the content script for the current font state when the popup opens
     chrome.tabs.sendMessage(tabId, { action: 'getFontState' }, function(response) {
+      // Handle cases where the content script isn't ready
       if (chrome.runtime.lastError) {
-        console.log("Content script might not be injected yet.");
+        console.log("Content script might not be injected yet. Button will appear as default.");
         return; 
       }
       if (response && typeof response.enabled !== 'undefined') {
         updateFontButtonState(response.enabled);
-      }
-    });
-
-    // Get the current auto direction state
-    chrome.tabs.sendMessage(tabId, { action: 'getAutoDirectionState' }, function(response) {
-      if (chrome.runtime.lastError) {
-        console.log("Content script might not be injected yet.");
-        return;
-      }
-      if (response && typeof response.enabled !== 'undefined') {
-        updateAutoDirectionState(response.enabled);
       }
     });
 
@@ -59,9 +37,11 @@ document.addEventListener('DOMContentLoaded', function () {
       chrome.tabs.sendMessage(tabId, { action: 'toggleFont' }, function(response) {
         if (chrome.runtime.lastError) {
           console.error("Error sending toggleFont message: " + chrome.runtime.lastError.message);
+          // Optional: Add logic here to inject the script if it's missing
           return;
         }
         if (response && typeof response.enabled !== 'undefined') {
+          // Update button state immediately based on the response from the content script
           updateFontButtonState(response.enabled);
         }
       });
@@ -75,22 +55,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         if (response) {
           console.log(response.status);
-        }
-      });
-    });
-
-    // Auto Direction toggle switch
-    autoDirectionToggle.addEventListener('change', function () {
-      const enabled = autoDirectionToggle.checked;
-      chrome.tabs.sendMessage(tabId, { action: 'setAutoDirection', enabled: enabled }, function(response) {
-        if (chrome.runtime.lastError) {
-          console.error("Error sending setAutoDirection message: " + chrome.runtime.lastError.message);
-          // Revert the toggle if message failed
-          autoDirectionToggle.checked = !enabled;
-          return;
-        }
-        if (response && typeof response.enabled !== 'undefined') {
-          updateAutoDirectionState(response.enabled);
         }
       });
     });
