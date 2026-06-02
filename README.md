@@ -2,6 +2,8 @@
 
 Switch text direction based on input language and add additional controls for toggling the page font (Vazirmatn) and overall page direction (RTL/LTR).
 
+<img width="800" height="603" alt="firefox-preview (1)" src="https://github.com/user-attachments/assets/4b829579-d99b-4d90-900c-31ddeb3afe99" />
+
 [Install Extension from Chrome Web Store](https://chromewebstore.google.com/detail/auto-rtlltr-switcher/iagbjlddhajgidlfcdpocafilcabjfbi)
 
 [Install Firefox Add-on](https://addons.mozilla.org/en-US/firefox/addon/auto-rtl-ltr-switcher/)
