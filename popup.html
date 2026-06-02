@@ -5,7 +5,7 @@
   <title>Auto RTL/LTR Switcher</title>
   <style>
     body {
-      min-width: 220px;
+      min-width: 250px;
       min-height: 120px;
       font-family: Arial, sans-serif;
       padding: 12px;
@@ -45,17 +45,108 @@
       background-color: #e8e8e8;
     }
     
-    /* MODIFIED: Updated active state to show a green theme */
     button.active {
       font-weight: bold;
-      background-color: #e8f5e9; /* Light green background */
-      border: 1px solid #a5d6a7;  /* Slightly darker green border */
+      background-color: #e8f5e9;
+      border: 1px solid #a5d6a7;
     }
     
     small {
       font-size: 11px;
       color: #5f6368;
       font-weight: normal;
+    }
+
+    /* ===== Toggle Switch Styles ===== */
+    .switch-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      margin: 6px 0;
+      background-color: #f8f9fa;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .switch-container:hover {
+      background-color: #f1f3f4;
+      border-color: #c6c6c6;
+    }
+
+    .switch-label {
+      font-size: 14px;
+      color: #202124;
+      user-select: none;
+    }
+
+    .switch-label small {
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* The toggle switch */
+    .switch {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+      margin-left: 10px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.3s;
+      border-radius: 22px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #4caf50;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(18px);
+    }
+
+    .switch-container.disabled {
+      opacity: 0.5;
+    }
+
+    .switch-container.disabled .switch-label {
+      text-decoration: line-through;
+      color: #999;
+    }
+    /* ===== End Toggle Switch Styles ===== */
+
+    .separator {
+      border: none;
+      border-top: 1px solid #f1f3f4;
+      margin: 10px 0 6px 0;
     }
     
     .footer {
@@ -70,9 +161,25 @@
 </head>
 <body>
   <div class="header">Page Text Settings</div>
+
+  <!-- Auto Direction Toggle Switch -->
+  <div class="switch-container" id="autoDirectionContainer">
+    <div class="switch-label">
+      Auto Direction
+      <small>Auto-detect input direction</small>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="autoDirectionToggle" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <hr class="separator">
+
   <button id="toggleFont">Toggle Font <small>(Vazirmatn)</small></button>
-  <button id="toggleDirection">Toggle Direction <small>(Alt+Shift+D)</small></button>
-  <div class="footer">Auto RTL/LTR Switcher v2.5</div>
+  <button id="toggleDirection">Toggle Direction <small>(Ctrl+Shift+X)</small></button>
+
+  <div class="footer">Auto RTL/LTR Switcher v2.7</div>
   <script src="popup.js"></script>
 </body>
 </html>
