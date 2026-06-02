@@ -1,4 +1,4 @@
-# Auto RTL-LTR Switcher Chrome Extension
+# Auto RTL-LTR Switcher Browser Extension
 
 Switch text direction based on input language and add additional controls for toggling the page font (Vazirmatn) and overall page direction (RTL/LTR).
 
