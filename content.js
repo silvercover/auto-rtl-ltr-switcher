@@ -12,9 +12,11 @@ function injectRTLProtectionStyles() {
       text-align: right !important;
     }
 
-    /* ── Rule 2: all text-bearing elements
-          !important is required to beat site stylesheets
-          (e.g. .container .msg { text-align:left } would win without it) ── */
+    /* ── Rule 2: text-bearing elements only.
+          NOTE: div/span intentionally excluded — too aggressive,
+          breaks layouts on Gmail, Twitter, GitHub, etc.
+          Sites that need RTL on div/span should rely on inherited
+          direction from body[dir="rtl"]. ── */
     body[dir="rtl"] p,
     body[dir="rtl"] h1, body[dir="rtl"] h2, body[dir="rtl"] h3,
     body[dir="rtl"] h4, body[dir="rtl"] h5, body[dir="rtl"] h6,
@@ -22,7 +24,6 @@ function injectRTLProtectionStyles() {
     body[dir="rtl"] td, body[dir="rtl"] th,
     body[dir="rtl"] dt, body[dir="rtl"] dd,
     body[dir="rtl"] blockquote, body[dir="rtl"] figcaption,
-    body[dir="rtl"] div, body[dir="rtl"] span,
     body[dir="rtl"] label, body[dir="rtl"] a {
       text-align: right !important;
     }
@@ -73,6 +74,17 @@ function toggleSiteDisabled(callback) {
 }
 
 // ─────────────────────────────────────────────────────────────
+// RTL detection regex — covers:
+//   Hebrew                       U+0590–U+05FF
+//   Arabic                       U+0600–U+06FF
+//   Arabic Supplement            U+0750–U+077F
+//   Arabic Extended-A            U+08A0–U+08FF
+//   Arabic Presentation Forms-A  U+FB50–U+FDFF
+//   Arabic Presentation Forms-B  U+FE70–U+FEFF
+// ─────────────────────────────────────────────────────────────
+const RTL_REGEX = /[\u0590-\u05FF\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+// ─────────────────────────────────────────────────────────────
 // Auto direction for inputs
 //
 // FIX 1: element.textContent instead of element.innerText
@@ -91,7 +103,7 @@ function applyAutoDirection(element) {
 
     // FIX: textContent has zero reflow cost; slice limits scan work
     const text = (element.value || element.textContent || '').slice(0, 200);
-    const isRTL = /[\u0600-\u06FF]/.test(text);
+    const isRTL = RTL_REGEX.test(text);
 
     element.style.direction = isRTL ? 'rtl' : 'ltr';
     element.style.textAlign = isRTL ? 'right' : 'left';
@@ -153,9 +165,15 @@ const observer = new MutationObserver((mutations) => {
 });
 
 // ─────────────────────────────────────────────────────────────
-// Font feature (unchanged)
+// Font feature
+//
+// FIX (NEW): WeakSet to prevent infinite recursion when iframes/
+// shadow roots reference each other (or themselves). Also dramatically
+// reduces CPU on heavy SPAs (Gmail, Notion) where TreeWalker would
+// otherwise re-visit the same shadow trees repeatedly.
 // ─────────────────────────────────────────────────────────────
 let fontToggled = false;
+let visitedContexts = new WeakSet();
 
 function saveFontSetting(enabled) {
   const domain = getCurrentDomain();
@@ -174,6 +192,7 @@ function loadFontSetting() {
     const fontSettings = result.fontSettings || {};
     if (fontSettings[domain]?.fontEnabled) {
       loadVazirmatnFont();
+      visitedContexts = new WeakSet(); // reset for fresh traversal
       injectFontStyle(document);
       fontToggled = true;
     }
@@ -182,6 +201,8 @@ function loadFontSetting() {
 
 function injectFontStyle(context) {
   if (!context) return;
+  if (visitedContexts.has(context)) return;
+  visitedContexts.add(context);
 
   let createElement;
   if (typeof context.createElement === 'function') {
@@ -221,8 +242,9 @@ function injectFontStyle(context) {
           context.body, NodeFilter.SHOW_ELEMENT, null, false
         );
         while (walker.nextNode()) {
-          if (walker.currentNode.shadowRoot) {
-            injectFontStyle(walker.currentNode.shadowRoot);
+          const sr = walker.currentNode.shadowRoot;
+          if (sr && !visitedContexts.has(sr)) {
+            injectFontStyle(sr);
           }
         }
       } catch (e) { /* detached document */ }
@@ -233,7 +255,10 @@ function injectFontStyle(context) {
     idle(() => {
       try {
         for (const iframe of context.getElementsByTagName('iframe')) {
-          try { injectFontStyle(iframe.contentDocument); } catch (e) { /* cross-origin */ }
+          try {
+            const doc = iframe.contentDocument;
+            if (doc && !visitedContexts.has(doc)) injectFontStyle(doc);
+          } catch (e) { /* cross-origin */ }
         }
       } catch (e) { /* detached document */ }
     });
@@ -242,6 +267,8 @@ function injectFontStyle(context) {
 
 function removeFontStyle(context) {
   if (!context) return;
+  if (visitedContexts.has(context)) return;
+  visitedContexts.add(context);
 
   // Remove font-face declaration (only lives on main document)
   document.getElementById('vazirmatn-font-face')?.remove();
@@ -262,8 +289,9 @@ function removeFontStyle(context) {
           context.body, NodeFilter.SHOW_ELEMENT, null, false
         );
         while (walker.nextNode()) {
-          if (walker.currentNode.shadowRoot) {
-            removeFontStyle(walker.currentNode.shadowRoot);
+          const sr = walker.currentNode.shadowRoot;
+          if (sr && !visitedContexts.has(sr)) {
+            removeFontStyle(sr);
           }
         }
       } catch (e) { /* detached document */ }
@@ -274,7 +302,10 @@ function removeFontStyle(context) {
     idle(() => {
       try {
         for (const iframe of context.getElementsByTagName('iframe')) {
-          try { removeFontStyle(iframe.contentDocument); } catch (e) { /* cross-origin */ }
+          try {
+            const doc = iframe.contentDocument;
+            if (doc && !visitedContexts.has(doc)) removeFontStyle(doc);
+          } catch (e) { /* cross-origin */ }
         }
       } catch (e) { /* detached document */ }
     });
@@ -307,11 +338,13 @@ function loadVazirmatnFont() {
 function togglePageFont() {
   if (isSiteDisabled) return fontToggled;
   if (fontToggled) {
+    visitedContexts = new WeakSet(); // reset for fresh traversal
     removeFontStyle(document);
     fontToggled = false;
     saveFontSetting(false);
   } else {
     loadVazirmatnFont();
+    visitedContexts = new WeakSet(); // reset for fresh traversal
     injectFontStyle(document);
     fontToggled = true;
     saveFontSetting(true);
@@ -351,17 +384,36 @@ checkIfSiteDisabled((disabled) => {
     initializeAutoDirection();
     loadFontSetting();
   }
-  observer.observe(document.body, { childList: true, subtree: true });
+
+  // Guard against rare edge cases where body isn't ready yet
+  if (document.body) {
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  // Tell background the page has loaded so it can update the badge.
+  // Content script always knows its own URL — no permission needed,
+  // no cache needed, works even after service worker was asleep.
+  chrome.runtime.sendMessage({
+    action: 'pageLoaded',
+    url: window.location.href
+  });
 });
 
 // ─────────────────────────────────────────────────────────────
 // Message listener
+//
+// FIX: `return true` is required ONLY for async branches
+// (where sendResponse is called after a callback).
+// Returning true unconditionally caused Chrome to keep the
+// message channel open for sync branches too, producing
+// "message channel closed before response was received" warnings.
 // ─────────────────────────────────────────────────────────────
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.action === 'toggleFont') {
     const newState = togglePageFont();
     sendResponse({ status: 'font toggled', enabled: newState });
+    return false;
 
   } else if (request.action === 'toggleDirection') {
     const now = Date.now();
@@ -370,12 +422,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       togglePageDirection();
     }
     sendResponse({ status: 'direction toggled' });
+    return false;
 
   } else if (request.action === 'getFontState') {
     sendResponse({ enabled: fontToggled });
+    return false;
 
   } else if (request.action === 'getSiteDisabledState') {
     sendResponse({ isDisabled: isSiteDisabled });
+    return false;
 
   } else if (request.action === 'toggleSiteDisabled') {
     toggleSiteDisabled((isDisabled) => {
@@ -383,10 +438,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         initializeAutoDirection();
         loadFontSetting();
       }
+      // Notify background immediately to refresh badge on icon
+      chrome.runtime.sendMessage({
+        action: 'refreshBadge',
+        url: window.location.href
+      });
       sendResponse({ isDisabled });
     });
-    return true;
+    return true; // ← async response — must keep channel open
   }
 
-  return true;
+  return false;
 });

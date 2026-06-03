@@ -1,8 +1,8 @@
 {
-  "update_url": "https://clients2.google.com/service/update2/crx",
   "manifest_version": 3,
   "name": "Auto RTL/LTR Switcher",
   "version": "2.6",
+  "minimum_chrome_version": "102",
   "description": "Automatically switch text direction based on input language, toggle page font/direction, and disable per site.",
   "icons": {
     "16": "icon16.png",
@@ -53,10 +53,9 @@
     }
   },
   "permissions": [
-    "activeTab",
     "storage"
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;"
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline';"
   }
 }
