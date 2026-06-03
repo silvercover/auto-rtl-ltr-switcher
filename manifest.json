@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Auto RTL/LTR Switcher",
-  "version": "2.6",
+  "version": "2.7",
   "minimum_chrome_version": "102",
   "description": "Automatically switch text direction based on input language, toggle page font/direction, and disable per site.",
   "icons": {
