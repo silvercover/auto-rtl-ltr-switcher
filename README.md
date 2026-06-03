@@ -36,7 +36,7 @@ When the user starts typing in any text box, the extension checks the input lang
 
 # افزونه مرورگر برای تغییر جهت خودکار متن
 
-این افزونه جهت متون را بر اساس زبان ورودی به‌صورت خودکار تنظیم می‌کند و کنترل‌های جدیدی برای تغییر فونت صفحه به فونت Vazirmatn (از طریق Google Fonts) و تغییر جهت کلی صفحه (RTL/LTR) اضافه شده است.
+این افزونه جهت متون را بر اساس زبان ورودی به‌صورت خودکار تنظیم می‌کند و کنترل‌های جدیدی برای تغییر فونت صفحه به فونت Vazirmatn و تغییر جهت کلی صفحه (RTL/LTR) اضافه شده است.
 
 [نصب افزونه از طریق Chrome Store](https://chromewebstore.google.com/detail/auto-rtlltr-switcher/iagbjlddhajgidlfcdpocafilcabjfbi)
 
